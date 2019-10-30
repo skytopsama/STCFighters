@@ -9,7 +9,7 @@ class Fighter(object):
     def __init__(self, name):
         #personal info
         self.name = name
-        
+
         #base stats
         self.max_hp = 100
         self.hp = self.max_hp
@@ -17,7 +17,7 @@ class Fighter(object):
         self.sp = self.max_sp
         self.max_mp = 100
         self.mp = self.max_mp
-        
+
         #attributes
         self.base_con = 1
         self.con = self.base_con
@@ -29,7 +29,7 @@ class Fighter(object):
         self.agi = self.base_agi
         self.base_dex = 1
         self.dex = self.base_dex
-        
+
         #attack set
         self.attacks = []
         #move set
@@ -39,7 +39,7 @@ class Fighter(object):
         #self.armor=
         #current status
         self.status = "Normal"
-        
+
         #initiation actions
         Fighter.roster.append(self)
         print(self.name, "is ready to fight!!!")
@@ -59,8 +59,8 @@ class Fighter(object):
         reply += "AGI: " + str(self.base_agi) + "\n"
         reply += "DEX: " + str(self.base_dex) + "\n"
         return reply
-    
-    
+
+
     #Method for getting current stats
     def current_stats(self):
         reply =  "\n" + self.name + "\n"
@@ -75,7 +75,7 @@ class Fighter(object):
         reply += "AGI: " + str(self.agi) + "\n"
         reply += "DEX: " + str(self.dex) + "\n"
         print(reply)
-    
+
 #Stat relationship reset
 
     def update_base_stats(self):
@@ -87,7 +87,7 @@ class Fighter(object):
         self.mp = self.max_mp
 
 #Base Attribute change function
-        
+
     def set_base_attrs(self, attr_dict):
         for attr in attr_dict.keys():
             if attr == "con":
@@ -106,9 +106,9 @@ class Fighter(object):
                 self.base_dex = attr_dict[attr]
                 self.dex = self.base_dex
         self.update_base_stats()
-        
+
 #Current Attribute change function
-        
+
     def set_attrs(self, attr_dict):
         for attr in attr_dict.keys():
             if attr == "con":
@@ -132,19 +132,50 @@ class Fighter(object):
         self.int = self.base_int
         self.agi = self.base_agi
         self.dex = self.base_dex
-        
+
+    #check if fighter can use a move (rewrite as fighter method returning true or false)
+    def can_use_move(self, move):
+        #attr_changes = {}
+        cost_dict = move.move_cost
+        for cost_type in cost_dict.keys():
+            #if fighter stats/attributes is valid
+            if hasattr(self, cost_type) is True:
+                #once validated, check if there is enough
+                selected_attr = getattr(self, cost_type)
+                cost_amount = cost_dict[cost_type]
+                if selected_attr >= cost_amount:
+                    # continue
+                    continue
+                #end process if fighter cannot pay cost
+                else:
+                    print("Not enough") #expand string later
+                    return False
+            #end process if invalid attribute
+            else:
+                print(str(cost_type) + " is an invalid attribute.")
+                return False
+
+        return True
+
     def use_move(self, move_name, target):
         #if move_name is equipped to fighter
             x = [move for move in self.moves if move.name == move_name]
             if len(x) == 1:
-                x[0].do_move(self, target)
+                #if fighter can use the move
+                if self.can_use_move(x[0]):
+                    #execute move
+                    print(self.name +  " used " + x[0].name)
+                    x[0].execute(self, target)
+                else:
+                    #reject use move (exception)
+                    pass
             else:
                 pass
-            
+
             #execute move
 
 
 # #Weapon change function
-        
+
 #     def change_weapon(self, newWeapon):
 #         self.weapon = newWeapon
